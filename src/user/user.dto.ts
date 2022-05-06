@@ -46,3 +46,30 @@ export class FindUserByEmailRequestDto {
   })
   email: string;
 }
+
+export class UpdateUserRequestDto {
+  @ApiModelProperty({
+    required: true,
+    example: 1,
+    description: 'User id',
+  })
+  id: number;
+  @ApiModelProperty({
+    example: 'Foo',
+    description: 'User name',
+  })
+  name: string;
+  @ApiModelProperty({
+    example: 'foo_bar@example.com',
+    description: 'User email',
+  })
+  email: string;
+}
+
+export class UpdateUserResponseDto {
+  @ApiModelProperty({
+    description: 'Update result',
+    type: String,
+  })
+  message: string;
+}
