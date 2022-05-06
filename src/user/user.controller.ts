@@ -1,14 +1,25 @@
-import { Body, Controller, Get, OnModuleInit, Param, Post, Put } from "@nestjs/common";
-import { Client, ClientGrpc } from "@nestjs/microservices";
-import { grpcClientOptions } from "../grpc-client.options";
+import {
+  Body,
+  Controller,
+  Get,
+  OnModuleInit,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { Client, ClientGrpc } from '@nestjs/microservices';
+import { grpcClientOptions } from '../grpc-client.options';
 import {
   CreateUserRequestDto,
   FindOrCreateUserResponseDto,
   FindUserByEmailRequestDto,
   FindUserByIdRequestDto,
   UpdateUserRequestDto,
-  UpdateUserResponseDto
-} from "./user.dto";
+  UpdateUserResponseDto,
+} from './user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 interface UserService {
   create(data: CreateUserRequestDto): FindOrCreateUserResponseDto;
@@ -17,6 +28,8 @@ interface UserService {
   update(data: UpdateUserRequestDto): UpdateUserResponseDto;
 }
 
+@UseGuards(AuthGuard())
+@ApiBearerAuth('jwt')
 @Controller('user')
 export class UserController implements OnModuleInit, UserService {
   @Client(grpcClientOptions)
