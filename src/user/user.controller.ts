@@ -10,9 +10,10 @@ import { Client, ClientGrpc } from '@nestjs/microservices';
 import { grpcClientOptions } from '../grpc-client.options';
 import {
   CreateUserRequestDto,
-  FindOrCreateUserResponseDto, FindUserByEmailRequestDto,
-  FindUserByIdRequestDto
-} from "./user.dto";
+  FindOrCreateUserResponseDto,
+  FindUserByEmailRequestDto,
+  FindUserByIdRequestDto,
+} from './user.dto';
 
 interface UserService {
   create(data: CreateUserRequestDto): FindOrCreateUserResponseDto;
@@ -43,7 +44,9 @@ export class UserController implements OnModuleInit, UserService {
   }
 
   @Get('email/:email')
-  findByEmail(@Param() data: FindUserByEmailRequestDto): FindOrCreateUserResponseDto {
+  findByEmail(
+    @Param() data: FindUserByEmailRequestDto,
+  ): FindOrCreateUserResponseDto {
     return this.userService.findByEmail(data);
   }
 }
