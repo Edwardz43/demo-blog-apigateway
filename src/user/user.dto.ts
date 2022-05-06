@@ -13,6 +13,13 @@ export class CreateUserRequestDto {
     example: 'someone',
   })
   name: string;
+  @ApiModelProperty({
+    description: 'User password',
+    required: true,
+    type: String,
+    example: '1234@_Ggxx',
+  })
+  password: string;
 }
 
 export class FindOrCreateUserResponseDto {
