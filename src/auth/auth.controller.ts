@@ -21,7 +21,7 @@ export class AuthController implements OnModuleInit, AuthService {
     this.service = this.client.getService<AuthService>('AuthService');
   }
 
-  @Post()
+  @Post('register')
   register(@Body() createUserDto: RegisterRequestDto): RegisterResponseDto {
     return this.service.register(createUserDto);
   }
