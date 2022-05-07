@@ -1,30 +1,31 @@
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   Get,
   OnModuleInit,
   Param,
   Post,
   Put,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { Client, ClientGrpc } from '@nestjs/microservices';
 import { grpcClientOptions } from '../grpc-client.options';
 import {
-  CreateUserRequestDto, DeleteUserRequestDto, DeleteUserResponseDto,
-  FindOrCreateUserResponseDto,
+  DeleteUserRequestDto,
+  DeleteUserResponseDto,
+  FindUserResponseDto,
   FindUserByEmailRequestDto,
   FindUserByIdRequestDto,
   UpdateUserRequestDto,
-  UpdateUserResponseDto
-} from "./user.dto";
+  UpdateUserResponseDto,
+} from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 interface UserService {
-  create(data: CreateUserRequestDto): FindOrCreateUserResponseDto;
-  findById(data: FindUserByIdRequestDto): FindOrCreateUserResponseDto;
-  findByEmail(data: FindUserByEmailRequestDto): FindOrCreateUserResponseDto;
+  findById(data: FindUserByIdRequestDto): FindUserResponseDto;
+  findByEmail(data: FindUserByEmailRequestDto): FindUserResponseDto;
   update(data: UpdateUserRequestDto): UpdateUserResponseDto;
   delete(data: DeleteUserRequestDto): DeleteUserResponseDto;
 }
@@ -41,22 +42,13 @@ export class UserController implements OnModuleInit, UserService {
     this.userService = this.client.getService<UserService>('UserService');
   }
 
-  @Post()
-  create(
-    @Body() createUserDto: CreateUserRequestDto,
-  ): FindOrCreateUserResponseDto {
-    return this.userService.create(createUserDto);
-  }
-
   @Get('id/:id')
-  findById(@Param() data: FindUserByIdRequestDto): FindOrCreateUserResponseDto {
+  findById(@Param() data: FindUserByIdRequestDto): FindUserResponseDto {
     return this.userService.findById(data);
   }
 
   @Get('email/:email')
-  findByEmail(
-    @Param() data: FindUserByEmailRequestDto,
-  ): FindOrCreateUserResponseDto {
+  findByEmail(@Param() data: FindUserByEmailRequestDto): FindUserResponseDto {
     return this.userService.findByEmail(data);
   }
 

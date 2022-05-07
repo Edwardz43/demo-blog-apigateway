@@ -1,28 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
-export class CreateUserRequestDto {
-  @ApiModelProperty({
-    description: 'User name',
-    required: true,
-    type: String,
-    example: 'someUser@example.com',
-  })
-  email: string;
-  @ApiModelProperty({
-    description: 'User name',
-    example: 'someone',
-  })
-  name: string;
-  @ApiModelProperty({
-    description: 'User password',
-    required: true,
-    type: String,
-    example: '1234@_Ggxx',
-  })
-  password: string;
-}
-
-export class FindOrCreateUserResponseDto {
+export class FindUserResponseDto {
   @ApiModelProperty({
     description: 'User id',
     required: true,
