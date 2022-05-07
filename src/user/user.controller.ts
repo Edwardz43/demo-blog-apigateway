@@ -1,23 +1,23 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   OnModuleInit,
   Param,
   Post,
   Put,
-  UseGuards,
-} from '@nestjs/common';
+  UseGuards
+} from "@nestjs/common";
 import { Client, ClientGrpc } from '@nestjs/microservices';
 import { grpcClientOptions } from '../grpc-client.options';
 import {
-  CreateUserRequestDto,
+  CreateUserRequestDto, DeleteUserRequestDto, DeleteUserResponseDto,
   FindOrCreateUserResponseDto,
   FindUserByEmailRequestDto,
   FindUserByIdRequestDto,
   UpdateUserRequestDto,
-  UpdateUserResponseDto,
-} from './user.dto';
+  UpdateUserResponseDto
+} from "./user.dto";
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
@@ -26,6 +26,7 @@ interface UserService {
   findById(data: FindUserByIdRequestDto): FindOrCreateUserResponseDto;
   findByEmail(data: FindUserByEmailRequestDto): FindOrCreateUserResponseDto;
   update(data: UpdateUserRequestDto): UpdateUserResponseDto;
+  delete(data: DeleteUserRequestDto): DeleteUserResponseDto;
 }
 
 @UseGuards(AuthGuard())
@@ -62,5 +63,10 @@ export class UserController implements OnModuleInit, UserService {
   @Put()
   update(@Body() updateUserDto: UpdateUserRequestDto): UpdateUserResponseDto {
     return this.userService.update(updateUserDto);
+  }
+
+  @Delete()
+  delete(@Body() deleteUserDto: DeleteUserRequestDto): DeleteUserResponseDto {
+    return this.userService.delete(deleteUserDto);
   }
 }

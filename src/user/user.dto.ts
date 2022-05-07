@@ -80,3 +80,30 @@ export class UpdateUserResponseDto {
   })
   message: string;
 }
+
+export class DeleteUserRequestDto {
+  @ApiModelProperty({
+    description: 'User name',
+    required: true,
+    type: String,
+    example: 'someUser@example.com',
+  })
+  email: string;
+  @ApiModelProperty({
+    description: 'User login token',
+    required: true,
+    type: String,
+    example: 'secretToken',
+  })
+  token: string;
+}
+
+export class DeleteUserResponseDto {
+  @ApiModelProperty({
+    description: 'Delete user result',
+    required: true,
+    type: String,
+    example: 'ok',
+  })
+  message: string;
+}
