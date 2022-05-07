@@ -1,12 +1,22 @@
-import { Body, Controller, OnModuleInit, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  OnModuleInit,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreatePostRequestDto, CreatePostResponseDto } from './post.dto';
 import { Client, ClientGrpc } from '@nestjs/microservices';
 import { grpcClientOptions } from '../grpc-client.options';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 interface PostService {
   create(post: CreatePostRequestDto): CreatePostResponseDto;
 }
 
+@UseGuards(AuthGuard())
+@ApiBearerAuth('jwt')
 @Controller('post')
 export class PostController implements OnModuleInit, PostService {
   @Client(grpcClientOptions)
