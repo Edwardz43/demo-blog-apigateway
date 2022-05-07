@@ -5,7 +5,6 @@ import {
   Get,
   OnModuleInit,
   Param,
-  Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
