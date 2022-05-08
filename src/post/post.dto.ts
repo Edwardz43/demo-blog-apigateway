@@ -104,3 +104,40 @@ export class FindByAuthorResponseDto {
   })
   postList: PostDto;
 }
+
+export class UpdatePostRequestDto {
+  @ApiModelProperty({
+    description: 'Post ID',
+    required: true,
+    type: Number,
+    example: 1,
+  })
+  id: number;
+  @ApiModelProperty({
+    description: 'Title of the post',
+    type: String,
+    example: 'My first post',
+  })
+  title?: string;
+  @ApiModelProperty({
+    description: 'Content of the post',
+    type: String,
+    example: 'Long time ago in a galaxy far far away...',
+  })
+  content?: string;
+  @ApiModelProperty({
+    description: 'Is the post published or not',
+    type: Boolean,
+    example: false,
+  })
+  isPublished?: boolean;
+}
+
+export class UpdatePostResponseDto {
+  @ApiModelProperty({
+    description: 'Update post result',
+    type: String,
+    example: 'ok',
+  })
+  message: string;
+}
