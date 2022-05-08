@@ -1,6 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
-export class PostResponseDto {
+export class PostDto {
   @ApiModelProperty({
     description: 'Post ID',
     required: true,
@@ -119,7 +119,7 @@ export class FindByAuthorResponseDto {
   @ApiModelProperty({
     description: 'Post List',
   })
-  postList: PostResponseDto;
+  postList: PostDto;
 }
 
 export class UpdatePostRequestDto {
@@ -153,6 +153,39 @@ export class UpdatePostRequestDto {
 export class UpdatePostResponseDto {
   @ApiModelProperty({
     description: 'Update post result',
+    type: String,
+    example: 'ok',
+  })
+  message: string;
+}
+
+export class DeletePostRequestDto {
+  @ApiModelProperty({
+    description: 'Author token',
+    required: true,
+    type: String,
+    example: 'some-token',
+  })
+  token: string;
+  @ApiModelProperty({
+    description: 'Author Email',
+    required: true,
+    type: String,
+    example: 'someUser@example.com',
+  })
+  email: string;
+  @ApiModelProperty({
+    description: 'Post ID',
+    required: true,
+    type: Number,
+    example: 1,
+  })
+  id: number;
+}
+
+export class DeletePostResponseDto {
+  @ApiModelProperty({
+    description: 'Delete post result',
     type: String,
     example: 'ok',
   })

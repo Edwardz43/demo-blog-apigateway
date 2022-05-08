@@ -1,24 +1,37 @@
-import { Body, Controller, Get, OnModuleInit, Param, Post, Put, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  OnModuleInit,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   CreatePostRequestDto,
   CreatePostResponseDto,
+  DeletePostRequestDto,
+  DeletePostResponseDto,
   FindByAuthorRequestDto,
   FindByAuthorResponseDto,
   FindByIdRequestDto,
-  PostResponseDto,
+  PostDto,
   UpdatePostRequestDto,
-  UpdatePostResponseDto
-} from "./postResponseDto";
-import { Client, ClientGrpc } from "@nestjs/microservices";
-import { grpcClientOptions } from "../grpc-client.options";
-import { AuthGuard } from "@nestjs/passport";
-import { ApiBearerAuth } from "@nestjs/swagger";
+  UpdatePostResponseDto,
+} from './post.dto';
+import { Client, ClientGrpc } from '@nestjs/microservices';
+import { grpcClientOptions } from '../grpc-client.options';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 interface PostService {
   create(post: CreatePostRequestDto): CreatePostResponseDto;
   findByAuthor(authorId: FindByAuthorRequestDto): FindByAuthorResponseDto;
-  findById(id: FindByIdRequestDto): PostResponseDto;
+  findById(id: FindByIdRequestDto): PostDto;
   update(post: UpdatePostRequestDto): UpdatePostResponseDto;
+  delete(data: DeletePostRequestDto): DeletePostResponseDto;
 }
 
 @Controller('post')
@@ -47,7 +60,7 @@ export class PostController implements OnModuleInit {
   }
 
   @Get(':id')
-  findById(@Param() query: FindByIdRequestDto): PostResponseDto {
+  findById(@Param() query: FindByIdRequestDto): PostDto {
     return this.postService.findById({ id: query.id });
   }
 
@@ -56,5 +69,12 @@ export class PostController implements OnModuleInit {
   @Put()
   update(@Body() post: UpdatePostRequestDto): UpdatePostResponseDto {
     return this.postService.update(post);
+  }
+
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('jwt')
+  @Delete()
+  delete(@Body() data: DeletePostRequestDto): DeletePostResponseDto {
+    return this.postService.delete(data);
   }
 }
