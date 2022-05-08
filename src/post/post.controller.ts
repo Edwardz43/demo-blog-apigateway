@@ -1,29 +1,23 @@
-import {
-  Body,
-  Controller,
-  Get,
-  OnModuleInit,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, OnModuleInit, Param, Post, Put, UseGuards } from "@nestjs/common";
 import {
   CreatePostRequestDto,
   CreatePostResponseDto,
   FindByAuthorRequestDto,
   FindByAuthorResponseDto,
+  FindByIdRequestDto,
+  PostResponseDto,
   UpdatePostRequestDto,
-  UpdatePostResponseDto,
-} from './post.dto';
-import { Client, ClientGrpc } from '@nestjs/microservices';
-import { grpcClientOptions } from '../grpc-client.options';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
+  UpdatePostResponseDto
+} from "./postResponseDto";
+import { Client, ClientGrpc } from "@nestjs/microservices";
+import { grpcClientOptions } from "../grpc-client.options";
+import { AuthGuard } from "@nestjs/passport";
+import { ApiBearerAuth } from "@nestjs/swagger";
 
 interface PostService {
   create(post: CreatePostRequestDto): CreatePostResponseDto;
   findByAuthor(authorId: FindByAuthorRequestDto): FindByAuthorResponseDto;
+  findById(id: FindByIdRequestDto): PostResponseDto;
   update(post: UpdatePostRequestDto): UpdatePostResponseDto;
 }
 
@@ -50,6 +44,11 @@ export class PostController implements OnModuleInit {
     return this.postService.findByAuthor({
       authorId: query.authorId,
     });
+  }
+
+  @Get(':id')
+  findById(@Param() query: FindByIdRequestDto): PostResponseDto {
+    return this.postService.findById({ id: query.id });
   }
 
   @UseGuards(AuthGuard())

@@ -1,6 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
-export class PostDto {
+export class PostResponseDto {
   @ApiModelProperty({
     description: 'Post ID',
     required: true,
@@ -21,6 +21,13 @@ export class PostDto {
     example: 'Long time ago in a galaxy far far away...',
   })
   content?: string;
+  @ApiModelProperty({
+    description: 'Is the post published or not',
+    required: true,
+    type: Boolean,
+    example: true,
+  })
+  published: boolean;
   @ApiModelProperty({
     description: 'Author Name',
     type: String,
@@ -98,11 +105,21 @@ export class FindByAuthorRequestDto {
   authorId: number;
 }
 
+export class FindByIdRequestDto {
+  @ApiModelProperty({
+    description: 'Post ID',
+    required: true,
+    type: Number,
+    example: 1,
+  })
+  id: number;
+}
+
 export class FindByAuthorResponseDto {
   @ApiModelProperty({
     description: 'Post List',
   })
-  postList: PostDto;
+  postList: PostResponseDto;
 }
 
 export class UpdatePostRequestDto {
