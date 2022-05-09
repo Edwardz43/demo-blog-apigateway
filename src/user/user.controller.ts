@@ -29,8 +29,6 @@ interface UserService {
   delete(data: DeleteUserRequestDto): DeleteUserResponseDto;
 }
 
-@UseGuards(AuthGuard())
-@ApiBearerAuth('jwt')
 @Controller('user')
 export class UserController implements OnModuleInit, UserService {
   @Client(grpcClientOptions)
@@ -51,11 +49,15 @@ export class UserController implements OnModuleInit, UserService {
     return this.userService.findByEmail(data);
   }
 
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('jwt')
   @Put()
   update(@Body() updateUserDto: UpdateUserRequestDto): UpdateUserResponseDto {
     return this.userService.update(updateUserDto);
   }
 
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('jwt')
   @Delete()
   delete(@Body() deleteUserDto: DeleteUserRequestDto): DeleteUserResponseDto {
     return this.userService.delete(deleteUserDto);
