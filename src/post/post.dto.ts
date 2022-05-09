@@ -161,20 +161,6 @@ export class UpdatePostResponseDto {
 
 export class DeletePostRequestDto {
   @ApiModelProperty({
-    description: 'Author token',
-    required: true,
-    type: String,
-    example: 'some-token',
-  })
-  token: string;
-  @ApiModelProperty({
-    description: 'Author Email',
-    required: true,
-    type: String,
-    example: 'someUser@example.com',
-  })
-  email: string;
-  @ApiModelProperty({
     description: 'Post ID',
     required: true,
     type: Number,
