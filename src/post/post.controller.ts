@@ -6,8 +6,8 @@ import {
   Headers,
   OnModuleInit,
   Param,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -69,7 +69,7 @@ export class PostController implements OnModuleInit {
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth('jwt')
-  @Put()
+  @Patch()
   update(@Body() post: UpdatePostRequestDto): UpdatePostResponseDto {
     return this.postService.update(post);
   }
