@@ -5,6 +5,7 @@ package auth;
 service AuthService {
   rpc Register(RegisterRequest) returns (RegisterResponse) {}
   rpc Login(LoginRequest) returns (LoginResponse) {}
+  rpc parseToken(ParseTokenRequest) returns (ParseTokenResponse) {}
 }
 
 message LoginRequest {
@@ -23,6 +24,16 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message ParseTokenRequest {
+  string token = 1;
+}
+
+message ParseTokenResponse {
   int32 id = 1;
   string name = 2;
   string email = 3;

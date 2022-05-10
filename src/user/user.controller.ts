@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
+  Headers,
   OnModuleInit,
   Param,
-  Put,
+  Patch,
   UseGuards,
 } from '@nestjs/common';
 import { Client, ClientGrpc } from '@nestjs/microservices';
@@ -21,6 +23,7 @@ import {
 } from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { JwtService } from '@nestjs/jwt';
 
 interface UserService {
   findById(data: FindUserByIdRequestDto): FindUserResponseDto;
@@ -30,10 +33,12 @@ interface UserService {
 }
 
 @Controller('user')
-export class UserController implements OnModuleInit, UserService {
+export class UserController implements OnModuleInit {
   @Client(grpcClientOptions)
   private readonly client: ClientGrpc;
   private userService: UserService;
+
+  constructor(private readonly jwtService: JwtService) {}
 
   onModuleInit() {
     this.userService = this.client.getService<UserService>('UserService');
@@ -51,8 +56,18 @@ export class UserController implements OnModuleInit, UserService {
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth('jwt')
-  @Put()
-  update(@Body() updateUserDto: UpdateUserRequestDto): UpdateUserResponseDto {
+  @Patch()
+  update(
+    @Headers() headers,
+    @Body() updateUserDto: UpdateUserRequestDto,
+  ): UpdateUserResponseDto {
+    const h = { ...headers };
+    const payload = this.jwtService.verify(h.authorization.split(' ')[1], {
+      secret: 'secretKey',
+    });
+    if (!payload['id'] || payload['id'] !== updateUserDto.user.id) {
+      return { message: 'invalid user info' };
+    }
     return this.userService.update(updateUserDto);
   }
 

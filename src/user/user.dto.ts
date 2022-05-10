@@ -1,5 +1,54 @@
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
+export class UserDto {
+  @ApiModelProperty({
+    required: true,
+    example: 1,
+    type: Number,
+    description: 'User id',
+  })
+  id: number;
+  @ApiModelProperty({
+    example: 'Foo',
+    type: String,
+    description: 'User name',
+  })
+  name: string;
+  @ApiModelProperty({
+    example: 'foo_bar@example.com',
+    type: String,
+    description: 'User email',
+  })
+  email: string;
+}
+
+export class UserProfileDto {
+  @ApiModelProperty({
+    type: Number,
+    example: 20,
+    description: 'User age',
+  })
+  age?: number;
+  @ApiModelProperty({
+    type: String,
+    example: 1,
+    description: 'User phone number',
+  })
+  phone?: string;
+  @ApiModelProperty({
+    type: String,
+    example: 1,
+    description: 'User address',
+  })
+  address?: string;
+  @ApiModelProperty({
+    type: Date,
+    example: '1989-06-04',
+    description: 'User birthday',
+  })
+  birthday?: Date;
+}
+
 export class FindUserResponseDto {
   @ApiModelProperty({
     description: 'User id',
@@ -34,21 +83,17 @@ export class FindUserByEmailRequestDto {
 
 export class UpdateUserRequestDto {
   @ApiModelProperty({
+    description: 'User info',
     required: true,
-    example: 1,
-    description: 'User id',
+    type: UserDto,
   })
-  id: number;
+  user: UserDto;
   @ApiModelProperty({
-    example: 'Foo',
-    description: 'User name',
+    description: 'User profile',
+    required: true,
+    type: UserProfileDto,
   })
-  name: string;
-  @ApiModelProperty({
-    example: 'foo_bar@example.com',
-    description: 'User email',
-  })
-  email: string;
+  profile: UserProfileDto;
 }
 
 export class UpdateUserResponseDto {
