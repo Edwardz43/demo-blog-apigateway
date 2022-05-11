@@ -11,6 +11,9 @@ export const grpcClientOptions: ClientOptions = {
       join(__dirname, './protos/post.proto'),
       join(__dirname, './protos/upload.proto'),
     ],
-    url: 'localhost:5051',
+    // For Docker, use the following:
+    // url: 'api:50001',
+    // For local development, use the following:
+    url: '0.0.0.0:50001',
   },
 };
