@@ -50,12 +50,19 @@ export class UploadController implements OnModuleInit {
     @Headers() headers,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const h = { ...headers };
-    const payload = this.jwtService.verify(h.authorization.split(' ')[1], {
-      secret: 'secretKey',
-    });
+    const payload = this.parseToken(headers);
     const userId = payload['id'];
     const data = Uint16Array.from(file.buffer);
     return this.uploadService.upload({ userId: userId, file: data });
+  }
+
+  private parseToken(headers: object) {
+    const payload = this.jwtService.verify(
+      headers['authorization'].split(' ')[1],
+      {
+        secret: 'secretKey',
+      },
+    );
+    return payload;
   }
 }
