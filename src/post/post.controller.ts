@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Headers,
+  Inject,
   OnModuleInit,
   Param,
   Patch,
@@ -22,8 +23,7 @@ import {
   UpdatePostRequestDto,
   UpdatePostResponseDto,
 } from './post.dto';
-import { Client, ClientGrpc } from '@nestjs/microservices';
-import { grpcClientOptions } from '../grpc-client.options';
+import { ClientGrpc } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
@@ -38,10 +38,12 @@ interface PostService {
 
 @Controller('post')
 export class PostController implements OnModuleInit {
-  @Client(grpcClientOptions)
-  private readonly client: ClientGrpc;
   private postService: PostService;
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    @Inject('POST_PROVIDER') private readonly client: ClientGrpc,
+    @Inject('JWT_SECRET') private readonly jwtSecretKey: string,
+    private readonly jwtService: JwtService,
+  ) {}
 
   onModuleInit() {
     this.postService = this.client.getService<PostService>('PostService');
@@ -81,10 +83,12 @@ export class PostController implements OnModuleInit {
     @Headers() headers,
     @Body() data: DeletePostRequestDto,
   ): DeletePostResponseDto {
-    const h = { ...headers };
-    const payload = this.jwtService.verify(h.authorization.split(' ')[1], {
-      secret: 'secretKey',
-    });
+    const payload = this.jwtService.verify(
+      headers['authorization'].split(' ')[1],
+      {
+        secret: this.jwtSecretKey,
+      },
+    );
     const userId = payload['id'];
     const email = payload['email'];
     return this.postService.delete({

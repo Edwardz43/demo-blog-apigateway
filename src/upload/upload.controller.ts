@@ -1,6 +1,7 @@
 import {
   Controller,
   Headers,
+  Inject,
   OnModuleInit,
   Post,
   UploadedFile,
@@ -9,8 +10,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
-import { Client, ClientGrpc } from '@nestjs/microservices';
-import { grpcClientOptions } from '../grpc-client.options';
+import { ClientGrpc } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 
@@ -22,10 +22,12 @@ interface UploadService {
 @ApiBearerAuth('jwt')
 @Controller('upload')
 export class UploadController implements OnModuleInit {
-  @Client(grpcClientOptions)
-  private readonly client: ClientGrpc;
   private uploadService: UploadService;
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    @Inject('UPLOAD_PROVIDER') private readonly client: ClientGrpc,
+    @Inject('JWT_SECRET') private readonly jwtSecretKey: string,
+    private readonly jwtService: JwtService,
+  ) {}
 
   onModuleInit() {
     this.uploadService = this.client.getService<UploadService>('UploadService');
@@ -57,12 +59,8 @@ export class UploadController implements OnModuleInit {
   }
 
   private parseToken(headers: object) {
-    const payload = this.jwtService.verify(
-      headers['authorization'].split(' ')[1],
-      {
-        secret: 'secretKey',
-      },
-    );
-    return payload;
+    return this.jwtService.verify(headers['authorization'].split(' ')[1], {
+      secret: this.jwtSecretKey,
+    });
   }
 }
