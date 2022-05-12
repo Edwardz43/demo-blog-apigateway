@@ -1,20 +1,18 @@
-import { Body, Controller, OnModuleInit, Post } from '@nestjs/common';
+import { Body, Controller, Inject, OnModuleInit, Post } from '@nestjs/common';
 import {
   LoginRequestDto,
   LoginResponseDto,
   RegisterRequestDto,
   RegisterResponseDto,
 } from './auth.dto';
-import { Client, ClientGrpc } from '@nestjs/microservices';
-import { grpcClientOptions } from '../grpc-client.options';
+import { ClientGrpc } from '@nestjs/microservices';
 interface AuthService {
   register(data: RegisterRequestDto): RegisterResponseDto;
   login(data: LoginRequestDto): LoginResponseDto;
 }
 @Controller('auth')
 export class AuthController implements OnModuleInit, AuthService {
-  @Client(grpcClientOptions)
-  private readonly client: ClientGrpc;
+  constructor(@Inject('AUTH_PROVIDER') private readonly client: ClientGrpc) {}
   private service: AuthService;
 
   onModuleInit() {

@@ -3,15 +3,14 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Headers,
+  Inject,
   OnModuleInit,
   Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { Client, ClientGrpc } from '@nestjs/microservices';
-import { grpcClientOptions } from '../grpc-client.options';
+import { ClientGrpc } from '@nestjs/microservices';
 import {
   DeleteUserRequestDto,
   DeleteUserResponseDto,
@@ -34,11 +33,13 @@ interface UserService {
 
 @Controller('user')
 export class UserController implements OnModuleInit {
-  @Client(grpcClientOptions)
-  private readonly client: ClientGrpc;
-  private userService: UserService;
+  constructor(
+    @Inject('USER_PROVIDER') private readonly client: ClientGrpc,
+    @Inject('JWT_SECRET') private readonly secretKey: string,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  constructor(private readonly jwtService: JwtService) {}
+  private userService: UserService;
 
   onModuleInit() {
     this.userService = this.client.getService<UserService>('UserService');
@@ -61,10 +62,12 @@ export class UserController implements OnModuleInit {
     @Headers() headers,
     @Body() updateUserDto: UpdateUserRequestDto,
   ): UpdateUserResponseDto {
-    const h = { ...headers };
-    const payload = this.jwtService.verify(h.authorization.split(' ')[1], {
-      secret: 'secretKey',
-    });
+    const payload = this.jwtService.verify(
+      headers.authorization.split(' ')[1],
+      {
+        secret: this.secretKey,
+      },
+    );
     if (!payload['id'] || payload['id'] !== updateUserDto.user.id) {
       return { message: 'invalid user info' };
     }
