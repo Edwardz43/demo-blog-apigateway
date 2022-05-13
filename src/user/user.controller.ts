@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   Inject,
+  LoggerService,
   OnModuleInit,
   Param,
   Patch,
@@ -23,6 +24,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 interface UserService {
   findById(data: FindUserByIdRequestDto): FindUserResponseDto;
@@ -36,6 +38,8 @@ export class UserController implements OnModuleInit {
   constructor(
     @Inject('USER_PROVIDER') private readonly client: ClientGrpc,
     @Inject('JWT_SECRET') private readonly secretKey: string,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -62,13 +66,18 @@ export class UserController implements OnModuleInit {
     @Headers() headers,
     @Body() updateUserDto: UpdateUserRequestDto,
   ): UpdateUserResponseDto {
-    const payload = this.jwtService.verify(
-      headers.authorization.split(' ')[1],
-      {
-        secret: this.secretKey,
-      },
-    );
+    const token = headers.authorization.split(' ')[1];
+    const payload = this.jwtService.verify(token, {
+      secret: this.secretKey,
+    });
     if (!payload['id'] || payload['id'] !== updateUserDto.user.id) {
+      this.logger.warn({
+        controller: 'user',
+        action: 'update',
+        message: 'User not authorized to update user',
+        payload,
+        userId: updateUserDto.user.id,
+      });
       return { message: 'invalid user info' };
     }
     return this.userService.update(updateUserDto);
@@ -78,6 +87,11 @@ export class UserController implements OnModuleInit {
   @ApiBearerAuth('jwt')
   @Delete()
   delete(@Body() deleteUserDto: DeleteUserRequestDto): DeleteUserResponseDto {
+    this.logger.log({
+      controller: 'user',
+      action: 'delete',
+      deleteUserDto,
+    });
     return this.userService.delete(deleteUserDto);
   }
 }
