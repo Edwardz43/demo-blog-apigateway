@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   Inject,
+  LoggerService,
   OnModuleInit,
   Param,
   Patch,
@@ -27,6 +28,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 interface PostService {
   create(post: CreatePostRequestDto): CreatePostResponseDto;
@@ -42,6 +44,8 @@ export class PostController implements OnModuleInit {
   constructor(
     @Inject('POST_PROVIDER') private readonly client: ClientGrpc,
     @Inject('JWT_SECRET') private readonly jwtSecretKey: string,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -83,14 +87,17 @@ export class PostController implements OnModuleInit {
     @Headers() headers,
     @Body() data: DeletePostRequestDto,
   ): DeletePostResponseDto {
-    const payload = this.jwtService.verify(
-      headers['authorization'].split(' ')[1],
-      {
-        secret: this.jwtSecretKey,
-      },
-    );
+    const token = headers['authorization'].split(' ')[1];
+    const payload = this.jwtService.verify(token, {
+      secret: this.jwtSecretKey,
+    });
     const userId = payload['id'];
     const email = payload['email'];
+    this.logger.log({
+      controller: 'post',
+      action: 'delete',
+      data: data,
+    });
     return this.postService.delete({
       userId,
       email,
