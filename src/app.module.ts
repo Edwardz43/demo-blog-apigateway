@@ -7,7 +7,7 @@ import { PostModule } from './post/post.module';
 import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
-import { format, transports } from 'winston';
+import { format } from 'winston';
 import { WinstonModule } from 'nest-winston';
 import { join } from 'path';
 import DailyRotateFile = require('winston-daily-rotate-file');
@@ -29,7 +29,7 @@ import DailyRotateFile = require('winston-daily-rotate-file');
       transports: new DailyRotateFile({
         dirname: join(__dirname, `./../log/`),
         filename: '%DATE%.log',
-        datePattern: 'YYYY-MM-DD-HH',
+        datePattern: 'YYYY-MM-DD',
         zippedArchive: true,
         maxSize: '10m',
         maxFiles: '7d',
